@@ -33,10 +33,12 @@ function cognexusSchemaPolicy(schema){
 
 async function run(){
   let Validator;
+  const importStart=performance.now();
   try{
     const mod=await import("./vendor/cfworker-json-schema/dist/esm/index.js");
     Validator=mod.Validator;
     log("LOCAL LIBRARY IMPORT","SUCCESS");
+    log("LOCAL LIBRARY IMPORT TIME",(performance.now()-importStart).toFixed(3)+" ms");
   }catch(e){
     log("LOCAL LIBRARY IMPORT","FAILED");
     log("ERROR",String(e?.stack||e));
@@ -100,8 +102,12 @@ async function run(){
 
   const policyGood={"$schema":"http://json-schema.org/draft-07/schema#","type":"object"};
   const policyRemote={"$schema":"http://json-schema.org/draft-07/schema#","$ref":"https://example.invalid/schema.json"};
-  log("COGNEXUS POLICY EXACT DRAFT-07",JSON.stringify(cognexusSchemaPolicy(policyGood)));
-  log("COGNEXUS POLICY REMOTE $ref",JSON.stringify(cognexusSchemaPolicy(policyRemote)));
+  const exactPolicy=cognexusSchemaPolicy(policyGood);
+  const remotePolicy=cognexusSchemaPolicy(policyRemote);
+  log("COGNEXUS POLICY EXACT DRAFT-07",
+    JSON.stringify(exactPolicy)+"\nstartup decision: "+(exactPolicy.exactDraft07?"PASS":"FAIL"));
+  log("COGNEXUS POLICY REMOTE $ref",
+    JSON.stringify(remotePolicy)+"\nstartup decision: "+(remotePolicy.remoteRefsRejected?"PASS":"FAIL"));
 
   const t0=performance.now();
   const perfValidator=new Validator(meta,"2019-09");
