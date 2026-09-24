@@ -438,6 +438,31 @@ source:
 
 The exact validation rules and allowed reference formats are defined separately from this decision.
 
+---
+
+D029 — Source Type Is Flexible
+
+Status: LOCKED
+
+source.type is not restricted by the domain to a fixed enum.
+
+Cognexus may introduce new source types without requiring a domain-model change.
+
+Examples of source types include:
+
+- user
+- external
+- derived
+- ai
+- import
+- system
+- agent
+- api
+- migration
+
+Domain validation requires source.type to exist and be structurally valid, but does not restrict its value to a predefined list.
+
+The application may define normalization or conventions for source types separately when needed.
 
 ---
 
@@ -462,7 +487,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 28
+Total Locked Decisions: 29
 
 Architecture:
 LOCKED
@@ -499,4 +524,4 @@ Core Rule
 
 «Decisions define the constraints.»
 
-«Implementation must operate within both.»
+«Implementation must operate within both.
