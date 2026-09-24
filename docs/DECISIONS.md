@@ -382,6 +382,24 @@ Bukan langsung melakukan patch.
 
 ---
 
+D026 — Flexible Status And Epistemic Values
+
+Status: LOCKED
+
+Domain validation does not restrict status or epistemic_status to a fixed enum.
+
+The domain validates the structural requirements of Knowledge, while status and epistemic_status may evolve without requiring a domain-model change.
+
+Current defaults remain:
+
+status:
+active
+
+epistemic_status:
+known
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
