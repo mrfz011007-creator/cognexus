@@ -6,11 +6,21 @@ const KNOWLEDGE_TYPES = [
     "Project"
 ];
 
+function generateKnowledgeId() {
+    if (!globalThis.crypto?.randomUUID) {
+        throw new Error("UUID generation is not supported");
+    }
+
+    return globalThis.crypto.randomUUID();
+}
+
 export function createKnowledge(data) {
     validateKnowledge(data);
 
+    const now = new Date().toISOString();
+
     return {
-        id: data.id,
+        id: generateKnowledgeId(),
         type: data.type,
         title: data.title,
         content: data.content,
@@ -18,13 +28,13 @@ export function createKnowledge(data) {
         status: data.status ?? "active",
         epistemic_status: data.epistemic_status ?? "known",
         tags: data.tags ?? [],
-        created_at: data.created_at,
-        updated_at: data.updated_at
+        created_at: now,
+        updated_at: now
     };
 }
 
 export function validateKnowledge(data) {
-    if (!data?.id) throw new Error("Knowledge id is required");
+    if (!data) throw new Error("Knowledge data is required");
     if (!KNOWLEDGE_TYPES.includes(data.type)) {
         throw new Error("Invalid knowledge type");
     }
