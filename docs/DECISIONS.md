@@ -491,7 +491,29 @@ source:
     kind: url
     value: https://example.com/article
 
-The allowed ref.kind values and their exact validation rules are a separate future decision.
+---
+
+D031 — Source Reference Kind Is Flexible
+
+Status: LOCKED
+
+ref.kind is not restricted by the domain to a fixed enum.
+
+Cognexus may introduce new reference kinds without requiring a domain-model change.
+
+Examples include:
+
+- entity
+- url
+- file
+- document
+- message
+- api
+- custom
+
+Domain validation requires ref.kind and ref.value to exist and be structurally valid, but does not restrict ref.kind to a predefined list.
+
+Application-level conventions may define recognized kinds when needed.
 
 ---
 
@@ -516,7 +538,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 30
+Total Locked Decisions: 31
 
 Architecture:
 LOCKED
