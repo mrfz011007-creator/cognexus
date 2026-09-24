@@ -590,6 +590,20 @@ The application validates and consumes the registry, while the domain continues 
 
 ---
 
+D035 — Reference Schema Registry Is Static At Runtime
+
+Status: LOCKED
+
+The reference schema registry is not modified or registered dynamically while Cognexus is running.
+
+Schema changes are made through the application's source/configuration and take effect when the updated application is deployed or loaded.
+
+Runtime code may read and validate against the registry, but may not mutate the registry definition.
+
+This keeps schema behavior deterministic and avoids introducing runtime schema persistence, synchronization, or security complexity at the foundation stage.
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
@@ -611,7 +625,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 34
+Total Locked Decisions: 35
 
 Architecture:
 LOCKED
