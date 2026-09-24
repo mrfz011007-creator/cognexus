@@ -517,6 +517,41 @@ Application-level conventions may define recognized kinds when needed.
 
 ---
 
+D032 — Source Reference Value Is Flexible
+
+Status: LOCKED
+
+source.ref.value is not restricted to a string.
+
+The value may be a structured value appropriate to the reference kind.
+
+Examples:
+
+Entity reference:
+
+source:
+  type: derived
+  ref:
+    kind: entity
+    value:
+      id: capture-123
+
+Coordinate reference:
+
+source:
+  type: external
+  ref:
+    kind: coordinates
+    value:
+      lat: -6.2
+      lng: 106.8
+
+Domain validation requires ref.value to exist and be structurally valid, but does not require it to have a single primitive type.
+
+Reference-kind-specific schemas and semantic validation may be defined at the application layer when needed.
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
@@ -538,7 +573,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 31
+Total Locked Decisions: 32
 
 Architecture:
 LOCKED
