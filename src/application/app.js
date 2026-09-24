@@ -1,35 +1,36 @@
+import { CONFIG } from "./config.js";
+import { createLogger, formatError } from "./utils.js";
 import { IndexedDBStorage } from "../infrastructure/indexeddb.js";
 import { KnowledgeRepository } from "../infrastructure/knowledge-repository.js";
 
 const output = document.createElement("pre");
 document.body.appendChild(output);
 
+const logger = createLogger();
+
 function show(label, data) {
     output.textContent += `${label}\n${JSON.stringify(data, null, 2)}\n\n`;
 }
 
-function log(message, data = null) {
-    console.info(`[Cognexus] ${message}`, data ?? "");
-}
-
 async function startApp() {
     try {
-        log("Starting application");
+        logger.info("Starting application");
 
-        const storage = new IndexedDBStorage();
+        const storage = new IndexedDBStorage(
+            CONFIG.databaseName,
+            CONFIG.databaseVersion
+        );
         const repository = new KnowledgeRepository(storage);
 
-        const result = await repository.get("test-001");
+        const result = await repository.get(CONFIG.persistenceTestId);
 
         show("PERSISTENCE TEST", result);
-        log("Application initialized");
+        logger.info("Application initialized");
     } catch (error) {
-        console.error("[Cognexus] Application initialization failed", error);
+        const details = formatError(error);
 
-        show("APPLICATION ERROR", {
-            name: error?.name ?? "Error",
-            message: error?.message ?? String(error)
-        });
+        logger.error("Application initialization failed", details);
+        show("APPLICATION ERROR", details);
     }
 }
 
