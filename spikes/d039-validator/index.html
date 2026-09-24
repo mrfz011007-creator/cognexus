@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cognexus D039 Validator Spike</title>
-<style>body{font-family:monospace;white-space:pre-wrap;padding:16px} .ok{color:green}.err{color:red}</style>
+<style>body{font-family:monospace;white-space:pre-wrap;padding:16px}pre{overflow:auto}</style>
 </head>
 <body>
 <h1>Cognexus D039 Validator Spike</h1>
@@ -13,6 +13,14 @@
 const out=document.getElementById("out");
 const lines=[];
 const log=(label,value)=>lines.push(label+": "+(typeof value==="string"?value:JSON.stringify(value,null,2)));
+const show=()=>{out.textContent=lines.join("\n\n");};
+
+async function loadJSON(url){
+  const response=await fetch(url);
+  if(!response.ok) throw new Error("HTTP "+response.status+" "+response.statusText+" for "+url);
+  return response.json();
+}
+
 async function run(){
   let Validator;
   try{
@@ -22,44 +30,47 @@ async function run(){
   }catch(e){
     log("IMPORT","FAILED");
     log("ERROR",String(e?.stack||e));
-    out.textContent=lines.join("\n\n");
+    show();
     return;
   }
 
   function testDynamic(){
     const schema={
       "$schema":"https://json-schema.org/draft/2020-12/schema",
-      "$defs":{
-        base:{
-          "$dynamicAnchor":"node",
-          "type":"string"
-        },
-        child:{
-          "type":"object",
-          "properties":{"value":{"$dynamicRef":"#node"}},
-          "required":["value"],
-          "additionalProperties":false
-        }
-      },
-      "$ref":"#/$defs/child"
+      "$dynamicAnchor":"node",
+      "type":"object",
+      "properties":{"child":{"$dynamicRef":"#node"}},
+      "additionalProperties":false
     };
-    const data={value:123};
+    const data={"child":123};
     try{
       const v=new Validator(schema,"2020-12");
       const r=v.validate(data);
-      log("DYNAMIC_REF","data={value:123}; expected invalid; result="+JSON.stringify(r));
+      log("DYNAMIC_REF TEST","schema:\n"+JSON.stringify(schema,null,2)+"\n\ndata="+JSON.stringify(data)+"\nexpected: INVALID\nactual: "+JSON.stringify(r));
     }catch(e){log("DYNAMIC_REF ERROR",String(e?.stack||e))}
   }
 
-  function testSchema(){
+  function testSchemaKeyword(){
     const schema={
-      "$schema":"https://json-schema.org/draft/07/schema#",
+      "$schema":"https://json-schema.org/draft/2020-12/schema",
+      "type":"strng"
+    };
+    try{
+      const v=new Validator(schema,"2020-12");
+      const r=v.validate("hello");
+      log("INVALID KEYWORD TEST","schema has type=\"strng\"; expected: INVALID\nactual: "+JSON.stringify(r));
+    }catch(e){log("INVALID KEYWORD ERROR",String(e?.stack||e))}
+  }
+
+  function testDeclaredSchema(){
+    const schema={
+      "$schema":"https://json-schema.org/draft-07/schema#",
       "type":"string"
     };
     try{
       const v=new Validator(schema,"2020-12");
       const r=v.validate(123);
-      log("$SCHEMA NON-2020-12","schema declares draft-07; validator draft=2020-12; result="+JSON.stringify(r));
+      log("$SCHEMA NON-2020-12","schema declares draft-07; validator draft=2020-12; actual: "+JSON.stringify(r));
     }catch(e){log("$SCHEMA NON-2020-12 ERROR",String(e?.stack||e))}
   }
 
@@ -71,16 +82,45 @@ async function run(){
     try{
       const v=new Validator(schema,"2020-12");
       const r=v.validate({});
-      log("REMOTE_REF","unregistered URL; result="+JSON.stringify(r));
+      log("REMOTE_REF","unregistered URL; actual: "+JSON.stringify(r));
     }catch(e){log("REMOTE_REF ERROR",String(e?.stack||e))}
-    log("NETWORK NOTE","Check browser DevTools Network if available; this page does not intercept requests.");
+    log("NETWORK NOTE","Use browser DevTools Network to see whether any request was attempted.");
+  }
+
+  async function testMetaschema(draft){
+    if(draft==="2020-12"){
+      const base="https://json-schema.org/draft/2020-12/";
+      const names=["core","applicator","unevaluated","validation","meta-data","format-annotation","content"];
+      try{
+        const meta=await loadJSON(base+"schema");
+        const vocabularies=await Promise.all(names.map(async name=>({name,schema:await loadJSON(base+"meta/"+name)})));
+        const validator=new Validator(meta,"2020-12");
+        for(const item of vocabularies) validator.addSchema(item.schema,item.schema.$id);
+        const validSchema={"$schema":"https://json-schema.org/draft/2020-12/schema","type":"string"};
+        const invalidSchema={"$schema":"https://json-schema.org/draft/2020-12/schema","type":"strng"};
+        log("2020-12 METASCHEMA VALID",JSON.stringify(validator.validate(validSchema)));
+        log("2020-12 METASCHEMA INVALID",JSON.stringify(validator.validate(invalidSchema)));
+      }catch(e){log("2020-12 METASCHEMA ERROR",String(e?.stack||e))}
+    }else{
+      try{
+        const meta=await loadJSON("https://json-schema.org/draft-07/schema");
+        const validator=new Validator(meta,"2019-09");
+        const validSchema={"$schema":"http://json-schema.org/draft-07/schema#","type":"string"};
+        const invalidSchema={"$schema":"http://json-schema.org/draft-07/schema#","type":"strng"};
+        log("DRAFT-07 METASCHEMA VALID",JSON.stringify(validator.validate(validSchema)));
+        log("DRAFT-07 METASCHEMA INVALID",JSON.stringify(validator.validate(invalidSchema)));
+      }catch(e){log("DRAFT-07 METASCHEMA ERROR",String(e?.stack||e))}
+    }
   }
 
   testDynamic();
-  testSchema();
+  testSchemaKeyword();
+  testDeclaredSchema();
   testRemoteRef();
+  await testMetaschema("2020-12");
+  await testMetaschema("draft-07");
   log("DONE","Tests completed");
-  out.textContent=lines.join("\n\n");
+  show();
 }
 run();
 </script>
