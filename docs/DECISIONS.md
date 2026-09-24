@@ -398,6 +398,47 @@ active
 epistemic_status:
 known
 
+
+---
+
+D027 — Knowledge Source And Reference Are Required
+
+Status: LOCKED
+
+Every Knowledge Entity must contain:
+
+source:
+  type: ...
+  ref: ...
+
+Both source.type and source.ref are required.
+
+This makes provenance a mandatory part of Knowledge metadata.
+
+---
+
+D028 — Source Reference May Be Internal Or External
+
+Status: LOCKED
+
+source.ref may reference either:
+
+- an internal Cognexus entity
+- an external source
+
+Examples:
+
+source:
+  type: derived
+  ref: capture-123
+
+source:
+  type: external
+  ref: https://example.com/article
+
+The exact validation rules and allowed reference formats are defined separately from this decision.
+
+
 ---
 
 Decision Change Protocol
@@ -421,7 +462,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 25
+Total Locked Decisions: 28
 
 Architecture:
 LOCKED
