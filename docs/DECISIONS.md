@@ -574,6 +574,22 @@ Reference-kind-specific validation belongs to the application layer and must not
 
 ---
 
+D034 — Reference Schema Registry Is External Configuration
+
+Status: LOCKED
+
+Reference-kind schemas are stored as external configuration/data rather than being hardcoded into application logic.
+
+Example location:
+
+config/reference-schemas.json
+
+The registry remains extensible: adding or changing a recognized reference schema should primarily modify configuration rather than the core domain model.
+
+The application validates and consumes the registry, while the domain continues to require only the structural validity defined by D031 and D032.
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
@@ -595,7 +611,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 33
+Total Locked Decisions: 34
 
 Architecture:
 LOCKED
