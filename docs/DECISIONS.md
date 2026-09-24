@@ -398,7 +398,6 @@ active
 epistemic_status:
 known
 
-
 ---
 
 D027 — Knowledge Source And Reference Are Required
@@ -426,17 +425,7 @@ source.ref may reference either:
 - an internal Cognexus entity
 - an external source
 
-Examples:
-
-source:
-  type: derived
-  ref: capture-123
-
-source:
-  type: external
-  ref: https://example.com/article
-
-The exact validation rules and allowed reference formats are defined separately from this decision.
+The exact reference structure is defined by D030.
 
 ---
 
@@ -466,6 +455,46 @@ The application may define normalization or conventions for source types separat
 
 ---
 
+D030 — Source Reference Is Structured
+
+Status: LOCKED
+
+source.ref is a structured object rather than a free-form string.
+
+Required structure:
+
+source:
+  type: ...
+  ref:
+    kind: ...
+    value: ...
+
+ref.kind identifies the reference form.
+
+ref.value contains the actual reference value.
+
+Examples:
+
+Internal reference:
+
+source:
+  type: derived
+  ref:
+    kind: entity
+    value: capture-123
+
+External URL:
+
+source:
+  type: external
+  ref:
+    kind: url
+    value: https://example.com/article
+
+The allowed ref.kind values and their exact validation rules are a separate future decision.
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
@@ -487,7 +516,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 29
+Total Locked Decisions: 30
 
 Architecture:
 LOCKED
