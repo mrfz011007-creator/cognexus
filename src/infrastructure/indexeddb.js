@@ -1,5 +1,10 @@
+import { CONFIG } from "../application/config.js";
+
 export class IndexedDBStorage {
-    constructor(name = "cognexus", version = 1) {
+    constructor(
+        name = CONFIG.databaseName,
+        version = CONFIG.databaseVersion
+    ) {
         this.name = name;
         this.version = version;
         this.db = null;
