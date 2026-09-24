@@ -552,6 +552,28 @@ Reference-kind-specific schemas and semantic validation may be defined at the ap
 
 ---
 
+D033 — Reference Kind Schema Registry
+
+Status: LOCKED
+
+Cognexus uses a schema registry for recognized ref.kind values.
+
+The registry defines the expected structure of ref.value for known reference kinds.
+
+The registry is extensible and does not turn ref.kind into a fixed enum.
+
+Example:
+
+entity → { id }
+url → string
+file → { path }
+
+Unknown or custom reference kinds may remain structurally valid without requiring an immediate registry entry.
+
+Reference-kind-specific validation belongs to the application layer and must not redefine the flexible domain model established by D031 and D032.
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
@@ -573,7 +595,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 32
+Total Locked Decisions: 33
 
 Architecture:
 LOCKED
