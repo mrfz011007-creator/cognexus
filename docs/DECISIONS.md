@@ -628,6 +628,31 @@ This keeps the registry separate from application logic while preserving determi
 
 ---
 
+D037 — Invalid Reference Schema Registry Must Fail Startup
+
+Status: LOCKED
+
+The reference schema registry must be fully valid before Cognexus can start using it.
+
+If a registry entry is unrecognized or violates the registry contract, startup must fail explicitly.
+
+An invalid entry includes, at minimum:
+
+- missing required registry fields
+- invalid reference kind format
+- duplicate reference kind definitions
+- schema that does not satisfy the registry contract
+
+The validation error must identify the affected registry entry or reference kind so the problem can be diagnosed directly.
+
+A reference kind is considered recognized when it is explicitly and validly declared in the registry.
+
+This does not make ref.kind a fixed enum. New kinds remain possible by adding valid declarations to the external registry.
+
+Unknown or undeclared kinds are not accepted as valid registry entries.
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
@@ -649,7 +674,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 36
+Total Locked Decisions: 37
 
 Architecture:
 LOCKED
