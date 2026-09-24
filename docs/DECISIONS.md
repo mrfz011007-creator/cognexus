@@ -604,6 +604,30 @@ This keeps schema behavior deterministic and avoids introducing runtime schema p
 
 ---
 
+D036 — Reference Schema Registry Loads From JSON At Startup
+
+Status: LOCKED
+
+Cognexus loads the reference schema registry from an external JSON file during application startup.
+
+Startup flow:
+
+Application Start
+↓
+Load reference-schemas.json
+↓
+Validate registry
+↓
+Use registry
+
+If the registry file is missing or invalid, startup must fail explicitly rather than silently falling back to another schema definition.
+
+The registry file path is configurable, with a clear default path.
+
+This keeps the registry separate from application logic while preserving deterministic runtime behavior under D035.
+
+---
+
 Decision Change Protocol
 
 Jika suatu keputusan ingin diubah:
@@ -625,7 +649,7 @@ Jika suatu keputusan ingin diubah:
 
 Current Decision State
 
-Total Locked Decisions: 35
+Total Locked Decisions: 36
 
 Architecture:
 LOCKED
