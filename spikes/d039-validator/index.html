@@ -87,6 +87,31 @@ async function run(){
     log("NETWORK NOTE","Use browser DevTools Network to see whether any request was attempted.");
   }
 
+  function testNestedMetaschema(draft,validator){
+    const cases=[
+      {
+        name:"NESTED TYPE",
+        schema:{"type":"object","properties":{"id":{"type":"strng"}}}
+      },
+      {
+        name:"NESTED REQUIRED",
+        schema:{"type":"object","properties":{"a":{"properties":{"b":{"required":"x"}}}}}
+      },
+      {
+        name:"NESTED ARRAY ITEMS",
+        schema:{"type":"array","items":{"type":"strng"}}
+      }
+    ];
+    for(const item of cases){
+      try{
+        const result=validator.validate(item.schema);
+        log(draft+" "+item.name,"schema:\n"+JSON.stringify(item.schema,null,2)+"\n\nresult: "+JSON.stringify(result));
+      }catch(e){
+        log(draft+" "+item.name+" ERROR",String(e?.stack||e));
+      }
+    }
+  }
+
   async function testMetaschema(draft){
     if(draft==="2020-12"){
       const base="https://json-schema.org/draft/2020-12/";
@@ -98,8 +123,9 @@ async function run(){
         for(const item of vocabularies) validator.addSchema(item.schema,item.schema.$id);
         const validSchema={"$schema":"https://json-schema.org/draft/2020-12/schema","type":"string"};
         const invalidSchema={"$schema":"https://json-schema.org/draft/2020-12/schema","type":"strng"};
-        log("2020-12 METASCHEMA VALID",JSON.stringify(validator.validate(validSchema)));
-        log("2020-12 METASCHEMA INVALID",JSON.stringify(validator.validate(invalidSchema)));
+        log("2020-12 METASCHEMA VALID","schema:\n"+JSON.stringify(validSchema,null,2)+"\n\nresult: "+JSON.stringify(validator.validate(validSchema)));
+        log("2020-12 METASCHEMA INVALID","schema:\n"+JSON.stringify(invalidSchema,null,2)+"\n\nresult: "+JSON.stringify(validator.validate(invalidSchema)));
+        testNestedMetaschema("2020-12",validator);
       }catch(e){log("2020-12 METASCHEMA ERROR",String(e?.stack||e))}
     }else{
       try{
@@ -107,8 +133,9 @@ async function run(){
         const validator=new Validator(meta,"2019-09");
         const validSchema={"$schema":"http://json-schema.org/draft-07/schema#","type":"string"};
         const invalidSchema={"$schema":"http://json-schema.org/draft-07/schema#","type":"strng"};
-        log("DRAFT-07 METASCHEMA VALID",JSON.stringify(validator.validate(validSchema)));
-        log("DRAFT-07 METASCHEMA INVALID",JSON.stringify(validator.validate(invalidSchema)));
+        log("DRAFT-07 METASCHEMA VALID","schema:\n"+JSON.stringify(validSchema,null,2)+"\n\nresult: "+JSON.stringify(validator.validate(validSchema)));
+        log("DRAFT-07 METASCHEMA INVALID","schema:\n"+JSON.stringify(invalidSchema,null,2)+"\n\nresult: "+JSON.stringify(validator.validate(invalidSchema)));
+        testNestedMetaschema("draft-07",validator);
       }catch(e){log("DRAFT-07 METASCHEMA ERROR",String(e?.stack||e))}
     }
   }
